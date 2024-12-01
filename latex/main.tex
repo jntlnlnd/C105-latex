@@ -1,0 +1,150 @@
+
+
+%  while true ; do rsync /home/imaseki/OneDrive/C104/C104Fig/* ./C104Fig/color/ ; python3 ./python/convert_gray_scale.py --input-dir ./C104Fig/color --output-dir ./C104Fig/gray  ; sleep 30 ; done
+
+% 画像の配置は最後に再度確認する
+
+% 推敲TODO
+% 節タイトルはパワポ感覚でつけていきたい。
+
+% 語彙統一リスト（基本的にはGoogle Scholarでヒット件数が大きい方と言う決め方）
+% Bag of Words
+% Self Attention(ハイフン無し)
+
+
+
+\documentclass[a5paper,twoside,dvipdfmx]{jsarticle}
+\AtBeginDvi{\special{pdf:mapfile haranoaji.map}}
+\usepackage[dvipdfmx]{graphicx}
+\title{実践PEFT
+
+～ご家庭のGPUでLLM fine-tuning～}
+%\author{お椀の底の玉}
+\date{}
+
+\usepackage{ascmac}
+
+\usepackage{caption}
+\captionsetup[table]{font={scriptsize}}
+
+\usepackage{mathtools}
+\mathtoolsset{showonlyrefs=true}
+
+\usepackage[top=30truemm,bottom=20truemm,left=25truemm,right=25truemm,headsep=5truemm]{geometry}
+
+\usepackage{url}
+
+\usepackage{color}
+
+\usepackage{type1cm}
+
+\usepackage{bxpapersize}
+
+\usepackage{booktabs}
+
+\usepackage{listings,jlisting} %日本語のコメントアウトをする場合jlistingが必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  language=Python,
+  basicstyle={\ttfamily},
+  identifierstyle={\small},
+%  commentstyle={\smallitshape},
+  keywordstyle={\small\bfseries},
+  ndkeywordstyle={\small},
+  stringstyle={\small\ttfamily},
+  frame={tb},
+  breaklines=true,
+  columns=[l]{fullflexible},
+  numbers=left,
+  xrightmargin=0zw,
+  xleftmargin=0zw,
+  numberstyle={\scriptsize},
+  stepnumber=1,
+  numbersep=1zw,
+  lineskip=-0.5ex,
+  showstringspaces=\false
+}
+
+\pagestyle{empty}
+
+\usepackage{fancyhdr}  
+\pagestyle{fancy}
+\fancyhead[RO,LE]{\thepage}
+\fancyhead[RE,LO]{\nouppercase{\leftmark}}
+\fancyheadoffset[R,L]{1cm}
+\cfoot{ }
+
+
+\usepackage{jumoline}
+\setlength{\UnderlineDepth}{3pt}
+
+\begin{document}
+
+% \mcfamily	
+
+\tableofcontents
+
+\newpage
+
+\maketitle
+
+\fontsize{9pt}{16pt}\selectfont
+
+\section{はじめに}
+
+
+
+\subsection{本書の目的}
+
+
+
+
+\newpage
+
+\thispagestyle{empty} 
+
+\textcolor{white}{.}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\vspace{\baselineskip}
+\begin{screen}
+
+実践PEFT ～ご家庭のGPUでLLM fine-tuning～
+
+\begin{tabbing}
+  0000000 \= 000 \= \kill
+  著者 \> お椀の底の玉 \\
+  発行日 \> 2024/12/30 (第2版) \\
+  発行元 \> ゆるふわ数理研究所　\\
+  X ID \> @yurufuwasuuri \\
+  印刷所 \> ちょ古っ都製本工房
+\end{tabbing}
+
+\end{screen}
+
+\vspace{\baselineskip}
+% 本書で使用したスプレッドシートは
+
+% % \url{https://docs.google.com/spreadsheets/d/1-R35DSPx9mZpWCph}
+
+% % \url{WSuliG8pkzbRLOUb9ySijESiDlc/edit?usp=sharing}
+
+% で閲覧が可能です。
+
+
+\end{document}
+\

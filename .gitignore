@@ -1,0 +1,5 @@
+text_classify
+data
+latex/out/*
+!latex/out/*.pdf
+tmp/
