@@ -589,7 +589,7 @@ valid AUCなどは少しPrompt tuningよりも良くなっています。testデ
 
 低ランクの差分テンソル・仮想プロンプトに続く第3のPEFT手法が内部的な出力を変換するアダプターを挟むという手法です。その中でも$\rm{(IA)^3}$はLoRAよりさらにfine-tuningするパラメータ数が小さい手法として知られています\footnote{H. Liu, D. Tam, M. Muqeeth, J. Mohta, T. Huang, M. Bansal, and C. A. Raffel, “Few-shot parameter-efficient fine-tuning is better and cheaper than in-context learning,” Advances in Neural Information Processing Systems, vol. 35, pp. 1950–1965, 2022.}。
 
-$\rm{(IA)^3}$ではTransformerブロックにおけるテンソルの一部（一般的にはSelf-AttentionのKey, Valueとそれに続くFeed Forward Network(FFN)の1層目）の出力に対して学習可能なベクトルを定義し、各トークンに対応するベクトルに対して要素ごとに積を取ることでその出力を補正します。
+$\rm{(IA)^3}$ではTransformerブロックにおけるテンソルの一部（一般的にはSelf AttentionのKey, Valueとそれに続くFeed Forward Network(FFN)の1層目）の出力に対して学習可能なベクトルを定義し、各トークンに対応するベクトルに対して要素ごとに積を取ることでその出力を補正します。
 
 
 \begin{figure}[h]
@@ -631,7 +631,7 @@ Adapterを入れる手法としてもう一つ、LLaMa-Adapterを紹介してお
 
 \newpage
 
-LLaMa-AdapterはTransformerブロックのSelf-Attentionの前方に、仮想的な埋め込みにあたるテンソルから計算したAttentionのKeyとValueをつなげる手法です。学習可能なテンソルを前方につなげるという意味では仮想プロンプトを学習する手法に近いですが、Transformerブロックのうち出力層に近い数ブロックを対象にする点が違いとなります。主なハイパーパラメータとしては仮想的なプロンプトのトークン数と出力から何ブロックまでさかのぼって適用するかの2つがあります。
+LLaMa-AdapterはTransformerブロックのSelf Attentionの前方に、仮想的な埋め込みにあたるテンソルから計算したAttentionのKeyとValueをつなげる手法です。学習可能なテンソルを前方につなげるという意味では仮想プロンプトを学習する手法に近いですが、Transformerブロックのうち出力層に近い数ブロックを対象にする点が違いとなります。主なハイパーパラメータとしては仮想的なプロンプトのトークン数と出力から何ブロックまでさかのぼって適用するかの2つがあります。
 
 
 \begin{figure}[h]
@@ -686,7 +686,7 @@ peft_config = AdaptionPromptConfig(
 
 今や様々な企業・機関がLLMを公開しており、その性能も日進月歩です。せっかく自由にパラメータをいじれる公開LLMをプロンプトエンジニアリングだけで扱うのはもったいないことで、目的に合わせたラベル付きデータセットでfine-tuningすることでその可能性を引き出すことができます。学習するハードウェアの確保が難しいとなった場合には、ぜひ本書の内容を思い出してみてください。
 
-誰でもプロンプトでAIを活用できるAI民主化の時代になっても、精度を突き詰めるシーンで機械学習エンジニアの舞台がなくなることはありません。AIに使われず、AIを使いこなす気概で次の時代を切り拓いていきましょう。
+誰でもプロンプトでAIを活用できるAI民主化の時代になっても、精度を突き詰めるシーンで機械学習エンジニアの役割がなくなることはありません。AIに使われず、AIを使いこなす気概で次の時代を切り拓いていきましょう。
 
 \newpage
 
