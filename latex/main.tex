@@ -384,7 +384,7 @@ PEFTの代表格がLow-Rank Adaptation (\textsf{LoRA})です\footnote{E. J. Hu, 
 
 PEFTの他手法と比べたLoRAの利点としては、学習後は差分テンソルを元のテンソルと足し合わせて一つのモデルにマージすることで、推論時の計算量を元のモデルと同じにすることができるという点です。後述する他の手法ではモデルの中に追加の計算処理を入れて、その処理におけるパラメータを学習するパターンが多いです。そのケースでは推論時にも追加の計算処理を実行する必要があるため、どうしても元のモデルより計算量は増えてしまいます。それを回避できる点でLoRAは魅力的です。
 
-またLoRAの低ランク近似は、元のモデルの知識がfine-tuningによって失われる\textsf{破滅的忘却}という現象を回避する良い正則化になっているという議論もあります\footnote{D. Biderman, J. Portes, J. J. G. Ortiz, M. Paul, P. Greengard, C. Jennings, D. King, S. Havens, V. Chiley, J. Frankle, C. Blakeney, and J. P. Cunningham, “LoRA Learns Less and Forgets Less,” arXiv preprint. arXiv:2405.09673 [cs.LG] (2024).}。これが事実であれば、省メモリなだけでなくLLMの知識を引き出し精度を出すfine-tuning手法としても有効ということになります。
+またLoRAの低ランク近似は、元のモデルの知識がfine-tuningによって失われる\textsf{破滅的忘却}という現象を回避する良い正則化になっているという議論もあります\footnote{D. Biderman, J. Portes, J. J. G. Ortiz, M. Paul, P. Greengard, C. Jennings, D. King, S. Havens, V. Chiley, J. Frankle, C. Blakeney, and J. P. Cunningham, “LoRA Learns Less and Forgets Less,” arXiv preprint. arXiv:2405.09673 [cs.LG] (2024).}。これが事実であれば、省メモリなだけでなくLLMの知識を引き出し精度を出すfine-tuning手法としても理にかなっているということになります。
 
 説明はこれくらいにして、実際に実行してみましょう！　PEFT手法は``huggingface/peft''というライブラリにまとめられていて、LoRAを含む様々な手法を統一された書き方で簡単に実装することができます。
 
@@ -568,6 +568,8 @@ peft_config = PromptEncoderConfig(
 
 そして学習した結果が次の通りです。
 
+\newpage
+
 \begin{figure}[h]
   \centering
   \includegraphics[width=60mm]{../C105Fig/gray/ptuning_train.png}
@@ -587,7 +589,7 @@ valid AUCなどは少しPrompt tuningよりも良くなっています。testデ
 
 低ランクの差分テンソル・仮想プロンプトに続く第3のPEFT手法が内部的な出力を変換するアダプターを挟むという手法です。その中でも$\rm{(IA)^3}$はLoRAよりさらにfine-tuningするパラメータ数が小さい手法として知られています\footnote{H. Liu, D. Tam, M. Muqeeth, J. Mohta, T. Huang, M. Bansal, and C. A. Raffel, “Few-shot parameter-efficient fine-tuning is better and cheaper than in-context learning,” Advances in Neural Information Processing Systems, vol. 35, pp. 1950–1965, 2022.}。
 
-$\rm{(IA)^3}$ではTransformerブロックにおけるテンソルの一部（一般的にはSelf-AttentionのKey, ValueとFeed Forward Network(FFN)の1層目）の出力に対して学習可能なベクトルを定義し、各トークンに対応するベクトルに対して要素ごとに積を取ることでその出力を補正します。
+$\rm{(IA)^3}$ではTransformerブロックにおけるテンソルの一部（一般的にはSelf-AttentionのKey, Valueとそれに続くFeed Forward Network(FFN)の1層目）の出力に対して学習可能なベクトルを定義し、各トークンに対応するベクトルに対して要素ごとに積を取ることでその出力を補正します。
 
 
 \begin{figure}[h]
