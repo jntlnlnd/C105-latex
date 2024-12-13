@@ -419,7 +419,7 @@ peft_model.print_trainable_parameters()
 # 出力: trainable params: 200,704 || all params: 1,663,870,976 || trainable%: 0.0121
 \end{lstlisting}
 
-全パラメータが16.6億\footnote{パラメータ数が1.8Bよりも小さいのはClassificationモデルとして読み込むことにより不要なテンソルが除外されていることなどが理由だと思いますが、詳細は調べ切れていません……。}に対して、学習するパラメータは20万と、実に0.01％程度まで減らせています。今回の設定では低ランク近似のランクを1にまで圧縮しているので、学習対象のパラメータも4桁も下げることができているのです。これにより、学習中に必要な勾配などのために保持しておくメモリ容量は誤差程度となるため、最低限のGPUメモリ消費で学習を動かせます。
+全パラメータが16.6億\footnote{パラメータ数が1.8Bよりも小さいのは、もとはText GenerationモデルをClassificationモデルとして読み込むことにより、生成のために特別に必要なテンソルが破棄されていることなどが理由だと思われます。}に対して、学習するパラメータは20万と、実に0.01％程度まで減らせています。今回の設定では低ランク近似のランクを1にまで圧縮しているので、学習対象のパラメータも4桁も下げることができているのです。これにより、学習中に必要な勾配などのために保持しておくメモリ容量は誤差程度となるため、最低限のGPUメモリ消費で学習を動かせます。
 
 それでは実際に学習させてみましょう。学習スクリプトは2章3節のスクリプトのTrainerに渡すmodelという変数をpeft\_modelに置き換えるだけです。
 
@@ -439,7 +439,7 @@ peft_model.print_trainable_parameters()
 
 さて、LoRAで効率よくLLMのfine-tuningができることが確認できたのは良いのですが、賢い人は次のように考えました。「LLMの全てのテンソルで同じランクの近似を行っているが、テンソルごとにランクを変えた方が良いのではないか」と。
 
-LLMはTransformerブロックと呼ばれるSelf Attentionと全結合を組み合わせたブロックを何層も重ねています。その層は深さに応じて役割が異なると言われており、それは浅いブロックでは単語同士の関係や短いフレーズなどの特徴を抽出する一方、深いほど広い文脈や抽象的な概念の情報を処理する、といった具合です。実際にこれを問題提起した\textsf{AdaLoRA}という手法の提案論文\footnote{Q. Zhang, M. Chen, A. Bukharin, P. He, Y. Cheng, W. Chen, and  T. Zhao, “Adaptive budget allocation for parameter-efficient fine-tuning,” arXiv preprint arXiv:2303.10512, 2023. }では、LLMの層別にLoRAを適用すると層が深いテンソルへのLoRAモデルの方がfine-tuning後の精度が上がることを確認しています。
+LLMはTransformerブロックと呼ばれるSelf Attentionと全結合を組み合わせたブロックを何層も重ねています。その層は深さに応じて役割が異なると言われており、それは浅いブロックでは単語同士の関係や短いフレーズなどの特徴を抽出する一方、深いほど広い文脈や抽象的な概念の情報を処理する、といった具合です。実際にこれを問題提起した\textsf{AdaLoRA}という手法の提案論文\footnote{Q. Zhang, M. Chen, A. Bukharin, P. He, Y. Cheng, W. Chen, and  T. Zhao, “Adaptive budget allocation for parameter-efficient fine-tuning,” arXiv preprint arXiv:2303.10512, 2023. }\footnote{AdaLoRAは`Adaptive Low-Rank Adaptation'の略とのこと。Adaptionがかぶっている……。}では、LLMの層別にLoRAを適用すると層が深いテンソルへのLoRAモデルの方がfine-tuning後の精度が上がることを確認しています。
 
 \newpage
 
@@ -548,7 +548,7 @@ LoRAと異なりPrompt tuningは入力という勾配逆伝播の終点部分の
 
 \subsection{P-Tuning: 仮想プロンプトの埋め込みにニューラルネットワークを挟む}
 
-ソフトプロンプトを勾配法で学習するのが素朴には難しいということは知られており、仮想プロンプトの埋め込みを直接ポエムのテンソルと結合するのではなく、ニューラルネットワークを通してから結合する\textsf{P-Tuning}という手法も提唱されています\footnote{X. Liu, Y. Zheng, Z. Du, M. Ding, Y. Qian, Z. Yang, and J. Tang, “GPT understands, Too,” arXiv preprint arXiv:2103.10385, 2021.}。具体的には以下の通りで、トークン埋め込みにあたるテンソル$h_{0:m}$をi番目で分割し、ニューラルネットワークの学習可能なレイヤーの1つであるLSTMとMulti Layer Perceptron(MLP)に通しています。
+ソフトプロンプトを勾配法で学習するのが素朴には難しいということは知られており、仮想プロンプトの埋め込みを直接ポエムのテンソルと結合するのではなく、ニューラルネットワークを通してから結合する\textsf{P-Tuning}という手法も提唱されています\footnote{X. Liu, Y. Zheng, Z. Du, M. Ding, Y. Qian, Z. Yang, and J. Tang, “GPT understands, Too,” arXiv preprint arXiv:2103.10385, 2021.}\footnote{P-TuningのPはPromptという意味だと思うのですが、論文を斜め読みした限りでは特に言及はありませんでした。}。具体的には以下の通りで、トークン埋め込みにあたるテンソル$h_{0:m}$をi番目で分割し、ニューラルネットワークの学習可能なレイヤーの1つであるLong Short Term Memory(LSTM)とMulti Layer Perceptron(MLP)に通しています。
 
 $$
 h_i = \mathrm{MLP} \left( [\overrightarrow{h}_i : \overleftarrow{h}_i] \right) \\
@@ -587,7 +587,7 @@ valid AUCなどは少しPrompt tuningよりも良くなっています。testデ
 
 \subsection{$\rm{(IA)^3}$: 各層の出力をベクトルで補正する}
 
-低ランクの差分テンソル・仮想プロンプトに続く第3のPEFT手法が内部的な出力を変換するアダプターを挟むという手法です。その中でも$\rm{(IA)^3}$はLoRAよりさらにfine-tuningするパラメータ数が小さい手法として知られています\footnote{H. Liu, D. Tam, M. Muqeeth, J. Mohta, T. Huang, M. Bansal, and C. A. Raffel, “Few-shot parameter-efficient fine-tuning is better and cheaper than in-context learning,” Advances in Neural Information Processing Systems, vol. 35, pp. 1950–1965, 2022.}。
+低ランクの差分テンソル・仮想プロンプトに続く第3のPEFT手法が内部的な出力を変換するアダプターを挟むという手法です。その中でも$\rm{(IA)^3}$はLoRAよりさらにfine-tuningするパラメータ数が小さい手法として知られています\footnote{H. Liu, D. Tam, M. Muqeeth, J. Mohta, T. Huang, M. Bansal, and C. A. Raffel, “Few-shot parameter-efficient fine-tuning is better and cheaper than in-context learning,” Advances in Neural Information Processing Systems, vol. 35, pp. 1950–1965, 2022.}\footnote{$\rm{(IA)^3}$は`Infused Adapter by Inhibiting and Amplifying Inner Activations'の略とのこと。}。
 
 $\rm{(IA)^3}$ではTransformerブロックにおけるテンソルの一部（一般的にはSelf AttentionのKey, Valueとそれに続くFeed Forward Network(FFN)の1層目）の出力に対して学習可能なベクトルを定義し、各トークンに対応するベクトルに対して要素ごとに積を取ることでその出力を補正します。
 
@@ -603,7 +603,7 @@ LoRAの場合はざっくり（トークンごとの埋め込み次元 $\times$ 
 
 なお$\rm{(IA)^3}$はLoRAと同様に学習後にはベクトルと各テンソルをかけ合わせてマージすることで、推論は元のモデルと同じ計算量で済みます。LoRAのランクのようなハイパーパラメータもないため、$\rm{(IA)^3}$で十分に精度が出る場合にはこちらを選ぶのも良いでしょう。
 
-それでは動かしてみましょう。IA3はハイパーパラメータもほとんどなく設定もかなりシンプルです。
+それでは動かしてみましょう。$\rm{(IA)^3}$はハイパーパラメータもほとんどなく設定もかなりシンプルです。
 
 \begin{lstlisting}
 from peft import IA3Config, TaskType
